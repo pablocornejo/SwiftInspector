@@ -16,7 +16,7 @@ let package = Package(
   ],
   dependencies: [
     .package(url: "https://github.com/apple/swift-argument-parser", from: "1.0.0"),
-    .package(url: "https://github.com/apple/swift-syntax.git", exact: "0.50600.1"),
+    .package(url: "https://github.com/apple/swift-syntax.git", exact: "0.50700.1"),
     .package(url: "https://github.com/Quick/Nimble.git", .upToNextMajor(from: "9.0.1")),
     .package(url: "https://github.com/Quick/Quick.git", .upToNextMajor(from: "4.0.0")),
   ],
