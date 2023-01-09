@@ -357,7 +357,7 @@ extension TypeSyntax {
     } else if let typeIdentifier = self.as(ImplicitlyUnwrappedOptionalTypeSyntax.self) {
       return .implicitlyUnwrappedOptional(typeIdentifier.wrappedType.typeDescription)
 
-    } else if let typeIdentifier = self.as(SomeTypeSyntax.self) {
+    } else if let typeIdentifier = self.as(ConstrainedSugarTypeSyntax.self) {
       return .some(typeIdentifier.baseType.typeDescription)
 
     } else if let typeIdentifier = self.as(MetatypeTypeSyntax.self) {
