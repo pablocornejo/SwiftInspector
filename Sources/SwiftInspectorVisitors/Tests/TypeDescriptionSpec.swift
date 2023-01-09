@@ -674,7 +674,7 @@ final class TypeDescriptionSpec: QuickSpec {
       context("when called on a TypeSyntax node representing a SomeTypeSyntax") {
         final class SomeTypeSyntaxVisitor: SyntaxVisitor {
           var someTypeIdentifier: TypeDescription?
-          override func visit(_ node: SomeTypeSyntax) -> SyntaxVisitorContinueKind {
+          override func visit(_ node: ConstrainedSugarTypeSyntax) -> SyntaxVisitorContinueKind {
             someTypeIdentifier = TypeSyntax(node).typeDescription
             return .skipChildren
           }

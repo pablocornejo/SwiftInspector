@@ -16,7 +16,7 @@ let package = Package(
   ],
   dependencies: [
     .package(url: "https://github.com/apple/swift-argument-parser", from: "1.0.0"),
-    .package(url: "https://github.com/apple/swift-syntax.git", exact: "0.50600.1"),
+    .package(url: "https://github.com/apple/swift-syntax.git", exact: "0.50700.1"),
     .package(url: "https://github.com/Quick/Nimble.git", .upToNextMajor(from: "9.0.1")),
     .package(url: "https://github.com/Quick/Quick.git", .upToNextMajor(from: "4.0.0")),
   ],
@@ -102,8 +102,8 @@ let package = Package(
 
       .binaryTarget(
           name: "lib_InternalSwiftSyntaxParser",
-          url: "https://github.com/keith/StaticInternalSwiftSyntaxParser/releases/download/5.6/lib_InternalSwiftSyntaxParser.xcframework.zip",
-          checksum: "88d748f76ec45880a8250438bd68e5d6ba716c8042f520998a438db87083ae9d"
+          url: "https://github.com/keith/StaticInternalSwiftSyntaxParser/releases/download/5.7.1/lib_InternalSwiftSyntaxParser.xcframework.zip",
+          checksum: "feb332ba0a027812b1ee7f552321d6069a46207e5cd0f64fa9bb78e2a261b366"
       ),
   ]
 )
