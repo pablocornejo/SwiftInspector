@@ -157,7 +157,7 @@ public final class PropertyVisitor: SyntaxVisitor {
   }
 
   private func findPropertyType(from node: VariableDeclSyntax) -> PropertyType {
-    if let type = PropertyType(rawValue: node.bindingKeyword.text) {
+    if let type = PropertyType(rawValue: node.bindingSpecifier.text) {
       return type
     }
     else {
@@ -199,8 +199,8 @@ private final class PatternBindingListVisitor: SyntaxVisitor {
   }
 
   public override func visit(_ node: AccessorDeclSyntax) -> SyntaxVisitorContinueKind {
-    if node.accessorKind.text == "get" { protocolRequirements.insert(.gettable) }
-    if node.accessorKind.text == "set" { protocolRequirements.insert(.settable) }
+    if node.accessorSpecifier.text == "get" { protocolRequirements.insert(.gettable) }
+    if node.accessorSpecifier.text == "set" { protocolRequirements.insert(.settable) }
     return .skipChildren
   }
 

@@ -50,7 +50,7 @@ public final class TypealiasAnalyzer: Analyzer {
   // MARK: Private
   private let cachedSyntaxTree: CachedSyntaxTree
 
-  private func typealiasStatement(from node: TypealiasDeclSyntax) -> TypealiasStatement {
+    private func typealiasStatement(from node: TypeAliasDeclSyntax) -> TypealiasStatement {
     var identifiers: [String] = []
 
     for child in node.children(viewMode: .visitorDefault) {
@@ -61,7 +61,7 @@ public final class TypealiasAnalyzer: Analyzer {
       identifiers = findIdentifiers(from: typeInitializerSyntax)
     }
 
-    return TypealiasStatement(name: node.identifier.text, identifiers:identifiers)
+    return TypealiasStatement(name: node.name.text, identifiers:identifiers)
   }
 
   private func findIdentifiers(from node: TypeInitializerClauseSyntax) -> [String] {
@@ -75,17 +75,17 @@ public final class TypealiasAnalyzer: Analyzer {
 }
 
 private final class TypealiasSyntaxReader: SyntaxVisitor {
-  init(onNodeVisit: @escaping (TypealiasDeclSyntax) -> Void) {
+  init(onNodeVisit: @escaping (TypeAliasDeclSyntax) -> Void) {
     self.onNodeVisit = onNodeVisit
       super.init(viewMode: .visitorDefault)
   }
 
-  override func visit(_ node: TypealiasDeclSyntax) -> SyntaxVisitorContinueKind {
+  override func visit(_ node: TypeAliasDeclSyntax) -> SyntaxVisitorContinueKind {
     onNodeVisit(node)
     return .visitChildren
   }
 
-  let onNodeVisit: (TypealiasDeclSyntax) -> Void
+  let onNodeVisit: (TypeAliasDeclSyntax) -> Void
 }
 
 public struct TypealiasStatement: Hashable {

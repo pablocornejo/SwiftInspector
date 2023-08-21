@@ -458,7 +458,7 @@ final class TypeDescriptionSpec: QuickSpec {
       context("when called on a TypeSyntax node representing a SimpleTypeIdentifierSyntax") {
         final class SimpleTypeIdentifierSyntaxVisitor: SyntaxVisitor {
           var simpleTypeIdentifier: TypeDescription?
-          override func visit(_ node: SimpleTypeIdentifierSyntax) -> SyntaxVisitorContinueKind {
+          override func visit(_ node: IdentifierTypeSyntax) -> SyntaxVisitorContinueKind {
             simpleTypeIdentifier = TypeSyntax(node).typeDescription
             return .skipChildren
           }
@@ -482,7 +482,7 @@ final class TypeDescriptionSpec: QuickSpec {
       context("when called on a TypeSyntax node representing a MemberTypeIdentifierSyntax") {
         final class MemberTypeIdentifierSyntaxVisitor: SyntaxVisitor {
           var nestedTypeIdentifier: TypeDescription?
-          override func visit(_ node: MemberTypeIdentifierSyntax) -> SyntaxVisitorContinueKind {
+          override func visit(_ node: MemberTypeSyntax) -> SyntaxVisitorContinueKind {
             nestedTypeIdentifier = TypeSyntax(node).typeDescription
             return .skipChildren
           }
@@ -556,7 +556,7 @@ final class TypeDescriptionSpec: QuickSpec {
           // Note: ideally we'd visit a node of type CompositionTypeElementListSyntax
           // but there's no easy way to get a TypeSyntax from an object of that type.
           override func visit(_ node: InheritedTypeSyntax) -> SyntaxVisitorContinueKind {
-            composedTypeIdentifier = node.typeName.typeDescription
+            composedTypeIdentifier = node.type.typeDescription
             return .skipChildren
           }
         }
@@ -581,8 +581,8 @@ final class TypeDescriptionSpec: QuickSpec {
           var optionalTypeIdentifiers = [TypeDescription]()
           override func visit(_ node: SameTypeRequirementSyntax) -> SyntaxVisitorContinueKind {
             optionalTypeIdentifiers += [
-              node.leftTypeIdentifier.typeDescription,
-              node.rightTypeIdentifier.typeDescription
+              node.leftType.typeDescription,
+              node.rightType.typeDescription
             ]
             return .skipChildren
           }
@@ -674,7 +674,7 @@ final class TypeDescriptionSpec: QuickSpec {
       context("when called on a TypeSyntax node representing a SomeTypeSyntax") {
         final class SomeTypeSyntaxVisitor: SyntaxVisitor {
           var someTypeIdentifier: TypeDescription?
-          override func visit(_ node: ConstrainedSugarTypeSyntax) -> SyntaxVisitorContinueKind {
+          override func visit(_ node: SomeOrAnyTypeSyntax) -> SyntaxVisitorContinueKind {
             someTypeIdentifier = TypeSyntax(node).typeDescription
             return .skipChildren
           }
@@ -779,7 +779,7 @@ final class TypeDescriptionSpec: QuickSpec {
       context("when called on a TypeSyntax node representing an array not of form ArrayTypeSyntax") {
         final class SimpleTypeIdentifierSyntaxVisitor: SyntaxVisitor {
           var typeIdentifier: TypeDescription?
-          override func visit(_ node: SimpleTypeIdentifierSyntax) -> SyntaxVisitorContinueKind {
+          override func visit(_ node: IdentifierTypeSyntax) -> SyntaxVisitorContinueKind {
             typeIdentifier = TypeSyntax(node).typeDescription
             return .skipChildren
           }
@@ -845,7 +845,7 @@ final class TypeDescriptionSpec: QuickSpec {
       context("when called on a TypeSyntax node representing a dictionary not of form DictionaryTypeSyntax") {
         final class SimpleTypeIdentifierSyntaxVisitor: SyntaxVisitor {
           var typeIdentifier: TypeDescription?
-          override func visit(_ node: SimpleTypeIdentifierSyntax) -> SyntaxVisitorContinueKind {
+          override func visit(_ node: IdentifierTypeSyntax) -> SyntaxVisitorContinueKind {
             typeIdentifier = TypeSyntax(node).typeDescription
             return .skipChildren
           }
@@ -915,7 +915,7 @@ final class TypeDescriptionSpec: QuickSpec {
           // Note: ideally we'd visit a node of type ClassRestrictionTypeSyntax
           // but there's no way to get a TypeSyntax from an object of that type.
           override func visit(_ node: InheritedTypeSyntax) -> SyntaxVisitorContinueKind {
-            classRestrictionIdentifier = node.typeName.typeDescription
+            classRestrictionIdentifier = node.type.typeDescription
             return .skipChildren
           }
         }

@@ -2,7 +2,7 @@ import SwiftSyntax
 
 public final class FunctionDeclarationVisitor: SyntaxVisitor {
   public override func visit(_ node: FunctionDeclSyntax) -> SyntaxVisitorContinueKind {
-    let name = node.identifier.text
+    let name = node.name.text
 
     let functionSignatureVisitor = FunctionSignatureVisitor(viewMode: .visitorDefault)
     functionSignatureVisitor.walk(node)
@@ -58,7 +58,7 @@ fileprivate final class FunctionSignatureVisitor: SyntaxVisitor {
     return .skipChildren
   }
   override func visit(_ node: ReturnClauseSyntax) -> SyntaxVisitorContinueKind {
-    returnType = node.returnType.typeDescription
+    returnType = node.type.typeDescription
     return .skipChildren
   }
 

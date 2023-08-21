@@ -91,7 +91,7 @@ public final class FileVisitor: SyntaxVisitor {
     return .skipChildren
   }
 
-  public override func visit(_ node: TypealiasDeclSyntax) -> SyntaxVisitorContinueKind {
+  public override func visit(_ node: TypeAliasDeclSyntax) -> SyntaxVisitorContinueKind {
     let typealiasVisitor = TypealiasVisitor()
     typealiasVisitor.walk(node)
 

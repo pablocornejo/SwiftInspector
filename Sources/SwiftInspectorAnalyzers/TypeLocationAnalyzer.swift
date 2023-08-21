@@ -64,27 +64,27 @@ private final class TypeLocationSyntaxVisitor: SyntaxVisitor {
   }
 
   override func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
-    processLocatedType(name: node.identifier.text, keywordToken: node.classKeyword, for: node)
+    processLocatedType(name: node.name.text, keywordToken: node.classKeyword, for: node)
     return .visitChildren
   }
     
   override func visit(_ node: ActorDeclSyntax) -> SyntaxVisitorContinueKind {
-    processLocatedType(name: node.identifier.text, keywordToken: node.actorKeyword, for: node)
+    processLocatedType(name: node.name.text, keywordToken: node.actorKeyword, for: node)
     return .visitChildren
   }
 
   override func visit(_ node: EnumDeclSyntax) -> SyntaxVisitorContinueKind {
-    processLocatedType(name: node.identifier.text, keywordToken: node.enumKeyword, for: node)
+    processLocatedType(name: node.name.text, keywordToken: node.enumKeyword, for: node)
     return .visitChildren
   }
 
   override func visit(_ node: ProtocolDeclSyntax) -> SyntaxVisitorContinueKind {
-    processLocatedType(name: node.identifier.text, keywordToken: node.protocolKeyword, for: node)
+    processLocatedType(name: node.name.text, keywordToken: node.protocolKeyword, for: node)
     return .visitChildren
   }
 
   override func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
-    processLocatedType(name: node.identifier.text, keywordToken: node.structKeyword, for: node)
+    processLocatedType(name: node.name.text, keywordToken: node.structKeyword, for: node)
     return .visitChildren
   }
 

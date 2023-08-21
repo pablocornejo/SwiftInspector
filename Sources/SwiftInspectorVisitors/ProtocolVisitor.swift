@@ -86,7 +86,7 @@ public final class ProtocolVisitor: SyntaxVisitor {
     return .skipChildren
   }
 
-  public override func visit(_ node: AssociatedtypeDeclSyntax) -> SyntaxVisitorContinueKind {
+  public override func visit(_ node: AssociatedTypeDeclSyntax) -> SyntaxVisitorContinueKind {
     let associatedtypeVisitor = AssociatedtypeVisitor(viewMode: .visitorDefault)
     associatedtypeVisitor.walk(node)
     associatedtypes.append(contentsOf: associatedtypeVisitor.associatedTypes)
@@ -95,7 +95,7 @@ public final class ProtocolVisitor: SyntaxVisitor {
     return .skipChildren
   }
 
-  public override func visit(_ node: TypealiasDeclSyntax) -> SyntaxVisitorContinueKind {
+  public override func visit(_ node: TypeAliasDeclSyntax) -> SyntaxVisitorContinueKind {
     let typealiasVisitor = TypealiasVisitor(parentType: parentType)
     typealiasVisitor.walk(node)
     typealiases.append(contentsOf: typealiasVisitor.typealiases)

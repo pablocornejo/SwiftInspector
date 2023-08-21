@@ -329,7 +329,7 @@ extension TypeSyntax {
 
   /// Returns the type description for the receiver.
   var typeDescription: TypeDescription {
-    if let typeIdentifier = self.as(SimpleTypeIdentifierSyntax.self) {
+    if let typeIdentifier = self.as(IdentifierTypeSyntax.self) {
       let genericTypeVisitor = GenericArgumentVisitor(viewMode: .visitorDefault)
       if let genericArgumentClause = typeIdentifier.genericArgumentClause {
         genericTypeVisitor.walk(genericArgumentClause)
@@ -338,7 +338,7 @@ extension TypeSyntax {
         name: typeIdentifier.name.text,
         generics: genericTypeVisitor.genericArguments)
 
-    } else if let typeIdentifier = self.as(MemberTypeIdentifierSyntax.self) {
+    } else if let typeIdentifier = self.as(MemberTypeSyntax.self) {
       let genericTypeVisitor = GenericArgumentVisitor(viewMode: .visitorDefault)
       if let genericArgumentClause = typeIdentifier.genericArgumentClause {
         genericTypeVisitor.walk(genericArgumentClause)
@@ -357,20 +357,20 @@ extension TypeSyntax {
     } else if let typeIdentifier = self.as(ImplicitlyUnwrappedOptionalTypeSyntax.self) {
       return .implicitlyUnwrappedOptional(typeIdentifier.wrappedType.typeDescription)
 
-    } else if let typeIdentifier = self.as(ConstrainedSugarTypeSyntax.self) {
-      return .some(typeIdentifier.baseType.typeDescription)
+    } else if let typeIdentifier = self.as(SomeOrAnyTypeSyntax.self) {
+      return .some(typeIdentifier.constraint.typeDescription)
 
     } else if let typeIdentifier = self.as(MetatypeTypeSyntax.self) {
       return .metatype(
         typeIdentifier.baseType.typeDescription,
-        isType: typeIdentifier.typeOrProtocol.text == "Type")
+        isType: typeIdentifier.metatypeSpecifier.text == "Type")
 
     } else if let typeIdentifier = self.as(AttributedTypeSyntax.self) {
       let specifier = typeIdentifier.specifier?.text
       let attributes = typeIdentifier.attributes.compactMap {
         $0.as(AttributeSyntax.self)?.attributeName.trimmedDescription
       }
-      if specifier == nil && attributes == nil {
+      if specifier == nil && attributes.isEmpty {
         assertionFailureOrPostNotification("Encountered an attributed type with no attributes or specifiers")
       }
       return .attributed(
@@ -379,12 +379,12 @@ extension TypeSyntax {
         attributes: attributes)
 
     } else if let typeIdentifier = self.as(ArrayTypeSyntax.self) {
-      return .array(element: typeIdentifier.elementType.typeDescription)
+      return .array(element: typeIdentifier.element.typeDescription)
 
     } else if let typeIdentifier = self.as(DictionaryTypeSyntax.self) {
       return .dictionary(
-        key: typeIdentifier.keyType.typeDescription,
-        value: typeIdentifier.valueType.typeDescription)
+        key: typeIdentifier.key.typeDescription,
+        value: typeIdentifier.value.typeDescription)
 
     } else if let typeIdentifiers = self.as(TupleTypeSyntax.self) {
       return .tuple(typeIdentifiers.elements.map { $0.type.typeDescription })
@@ -396,9 +396,9 @@ extension TypeSyntax {
 
     } else if let typeIdentifier = self.as(FunctionTypeSyntax.self) {
       return .closure(
-        arguments: typeIdentifier.arguments.map { $0.type.typeDescription },
+        arguments: typeIdentifier.parameters.map { $0.type.typeDescription },
         doesThrow: typeIdentifier.effectSpecifiers?.throwsSpecifier != nil,
-        returnType: typeIdentifier.output.returnType.typeDescription)
+        returnType: typeIdentifier.returnClause.type.typeDescription)
 
     } else {
       assertionFailureOrPostNotification("TypeSyntax of unknown type. Defaulting to `description`.")
@@ -414,7 +414,7 @@ private final class GenericArgumentVisitor: SyntaxVisitor {
   private(set) var genericArguments = [TypeDescription]()
 
   override func visit(_ node: GenericArgumentSyntax) -> SyntaxVisitorContinueKind {
-    genericArguments.append(node.argumentType.typeDescription)
+    genericArguments.append(node.argument.typeDescription)
     return .skipChildren
   }
 }

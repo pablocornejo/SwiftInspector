@@ -101,7 +101,7 @@ public final class ImportVisitor: SyntaxVisitor {
     var submoduleIdentifier: String = ""
 
     for child in syntaxNode.children(viewMode: .visitorDefault) {
-      guard let accessPath = child.as(AccessPathSyntax.self) else {
+      guard let accessPath = child.as(ImportPathComponentListSyntax.self) else {
         continue
       }
 

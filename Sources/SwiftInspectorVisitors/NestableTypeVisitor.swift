@@ -88,7 +88,7 @@ public final class NestableTypeVisitor: SyntaxVisitor {
     return .skipChildren
   }
 
-  public override func visit(_ node: TypealiasDeclSyntax) -> SyntaxVisitorContinueKind {
+  public override func visit(_ node: TypeAliasDeclSyntax) -> SyntaxVisitorContinueKind {
     guard
       !topLevelParsingTracker.hasFinishedParsing,
       let topLevelDeclarationName = topLevelDeclaration?.nestableInfo.name

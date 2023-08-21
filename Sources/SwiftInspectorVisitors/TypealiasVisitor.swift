@@ -33,8 +33,8 @@ public final class TypealiasVisitor: SyntaxVisitor {
 
   public private(set) var typealiases = [TypealiasInfo]()
 
-  public override func visit(_ node: TypealiasDeclSyntax) -> SyntaxVisitorContinueKind {
-    let name = node.identifier.text
+  public override func visit(_ node: TypeAliasDeclSyntax) -> SyntaxVisitorContinueKind {
+    let name = node.name.text
 
     let genericTypeVisitor = GenericParameterVisitor(viewMode: .visitorDefault)
     if let genericParameterClause = node.genericParameterClause {

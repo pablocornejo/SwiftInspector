@@ -64,8 +64,8 @@ public final class InitializerAnalyzer: Analyzer {
     let functionList = node.children(viewMode: .visitorDefault)
       .compactMap { $0.as(FunctionSignatureSyntax.self) }
       .first?.children(viewMode: .visitorDefault)
-      .compactMap { $0.as(ParameterClauseSyntax.self) }
-      .first?.parameterList
+      .compactMap { $0.as(FunctionParameterClauseSyntax.self) }
+      .first?.parameters
 
     guard let list = functionList else {
       return []
@@ -102,7 +102,7 @@ public final class InitializerAnalyzer: Analyzer {
 
   private func findModifiers(from node: InitializerDeclSyntax) -> Modifiers {
     let modifiersString: [String] = node.children(viewMode: .visitorDefault)
-      .compactMap { $0.as(ModifierListSyntax.self) }
+      .compactMap { $0.as(DeclModifierListSyntax.self) }
       .reduce(into: []) { result, syntax in
         let modifiers = syntax.children(viewMode: .visitorDefault)
           .compactMap { $0.as(DeclModifierSyntax.self) }
@@ -171,15 +171,15 @@ private final class InitializerSyntaxReader: SyntaxVisitor {
   }
 
   override func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
-    shouldVisitIdentifier(node.identifier.text) ? .visitChildren : .skipChildren
+    shouldVisitIdentifier(node.name.text) ? .visitChildren : .skipChildren
   }
 
   override func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
-    shouldVisitIdentifier(node.identifier.text) ? .visitChildren : .skipChildren
+    shouldVisitIdentifier(node.name.text) ? .visitChildren : .skipChildren
   }
 
   override func visit(_ node: EnumDeclSyntax) -> SyntaxVisitorContinueKind {
-    shouldVisitIdentifier(node.identifier.text) ? .visitChildren : .skipChildren
+    shouldVisitIdentifier(node.name.text) ? .visitChildren : .skipChildren
   }
 
   override func visit(_ node: InitializerDeclSyntax) -> SyntaxVisitorContinueKind {
@@ -192,16 +192,16 @@ private final class InitializerSyntaxReader: SyntaxVisitor {
 }
 
 private final class FunctionParameterReader: SyntaxVisitor {
-  init(onNodeVisit: @escaping (SimpleTypeIdentifierSyntax) -> Void) {
+  init(onNodeVisit: @escaping (IdentifierTypeSyntax) -> Void) {
     self.onNodeVisit = onNodeVisit
     super.init(viewMode: .visitorDefault)
   }
 
-  override func visit(_ node: SimpleTypeIdentifierSyntax) -> SyntaxVisitorContinueKind {
+  override func visit(_ node: IdentifierTypeSyntax) -> SyntaxVisitorContinueKind {
     onNodeVisit(node)
     return .visitChildren
   }
 
-  let onNodeVisit: (SimpleTypeIdentifierSyntax) -> Void
+  let onNodeVisit: (IdentifierTypeSyntax) -> Void
 
 }

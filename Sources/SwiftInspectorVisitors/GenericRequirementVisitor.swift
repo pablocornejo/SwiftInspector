@@ -41,7 +41,7 @@ public final class GenericRequirementVisitor: SyntaxVisitor {
     return .skipChildren
   }
 
-  public override func visit(_ node: MemberDeclBlockSyntax) -> SyntaxVisitorContinueKind {
+  public override func visit(_ node: MemberBlockSyntax) -> SyntaxVisitorContinueKind {
     // A member declaration block means we've found the body of the type.
     // There's nothing in this body that would help us determine generic requirements.
     .skipChildren
@@ -53,14 +53,14 @@ public struct GenericRequirement: Codable, Hashable {
   // MARK: Lifecycle
 
   init(node: SameTypeRequirementSyntax) {
-    leftType = node.leftTypeIdentifier.typeDescription
-    rightType = node.rightTypeIdentifier.typeDescription
+    leftType = node.leftType.typeDescription
+    rightType = node.rightType.typeDescription
     relationship = .equals
   }
 
   init(node: ConformanceRequirementSyntax) {
-    leftType = node.leftTypeIdentifier.typeDescription
-    rightType = node.rightTypeIdentifier.typeDescription
+    leftType = node.leftType.typeDescription
+    rightType = node.rightType.typeDescription
     relationship = .conformsTo
   }
 

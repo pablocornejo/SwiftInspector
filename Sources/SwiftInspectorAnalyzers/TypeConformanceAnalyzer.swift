@@ -60,7 +60,7 @@ public final class TypeConformanceAnalyzer: Analyzer {
 
   private func isSyntaxNode(_ node: InheritedTypeSyntax, ofType typeName: String) -> Bool {
     // Remove leading and trailing whitespace trivia
-    let syntaxTypeName = String(describing: node.typeName).trimmingCharacters(in: .whitespaces)
+    let syntaxTypeName = String(describing: node.type).trimmingCharacters(in: .whitespaces)
     return (syntaxTypeName == self.typeName)
   }
 
@@ -72,11 +72,11 @@ public final class TypeConformanceAnalyzer: Analyzer {
     // A conforming type can only be a class, struct or enum
     // See: https://docs.swift.org/swift-book/LanguageGuide/Protocols.html
     if let classSyntax = parent.as(ClassDeclSyntax.self) {
-      return classSyntax.identifier.text
+      return classSyntax.name.text
     } else if let structSyntax = parent.as(StructDeclSyntax.self) {
-      return structSyntax.identifier.text
+      return structSyntax.name.text
     } else if let enumSyntax = parent.as(EnumDeclSyntax.self) {
-      return enumSyntax.identifier.text
+      return enumSyntax.name.text
     } else {
       return findConformingType(of: parent.parent)
     }

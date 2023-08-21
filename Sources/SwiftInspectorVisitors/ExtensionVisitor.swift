@@ -90,7 +90,7 @@ public final class ExtensionVisitor: SyntaxVisitor {
     return .skipChildren
   }
 
-  public override func visit(_ node: TypealiasDeclSyntax) -> SyntaxVisitorContinueKind {
+  public override func visit(_ node: TypeAliasDeclSyntax) -> SyntaxVisitorContinueKind {
     let typealiasVisitor = TypealiasVisitor(parentType: extensionInfo?.typeDescription)
     typealiasVisitor.walk(node)
 

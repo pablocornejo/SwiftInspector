@@ -28,8 +28,8 @@ public final class AssociatedtypeVisitor: SyntaxVisitor {
 
   public private(set) var associatedTypes = [AssociatedtypeInfo]()
 
-  public override func visit(_ node: AssociatedtypeDeclSyntax) -> SyntaxVisitorContinueKind {
-    let name = node.identifier.text
+  public override func visit(_ node: AssociatedTypeDeclSyntax) -> SyntaxVisitorContinueKind {
+    let name = node.name.text
 
     let typeInheritanceVisitor = TypeInheritanceVisitor(viewMode: .visitorDefault)
     if let inheritanceClause = node.inheritanceClause {
