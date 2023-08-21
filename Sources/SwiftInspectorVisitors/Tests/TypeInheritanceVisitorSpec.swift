@@ -30,11 +30,11 @@ import SwiftInspectorTestHelpers
 @testable import SwiftInspectorVisitors
 
 final class TypeInheritanceVisitorSpec: QuickSpec {
-  private var sut = TypeInheritanceVisitor()
+  private var sut = TypeInheritanceVisitor(viewMode: .visitorDefault)
   
   override func spec() {
     beforeEach {
-      self.sut = TypeInheritanceVisitor()
+      self.sut = TypeInheritanceVisitor(viewMode: .visitorDefault)
     }
 
     describe("visit(_:)") {

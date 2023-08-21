@@ -470,7 +470,7 @@ final class TypeDescriptionSpec: QuickSpec {
               var int: Int = 1
               """
 
-          visitor = SimpleTypeIdentifierSyntaxVisitor()
+          visitor = SimpleTypeIdentifierSyntaxVisitor(viewMode: .visitorDefault)
           try? visitor.walkContent(content)
         }
 
@@ -495,7 +495,7 @@ final class TypeDescriptionSpec: QuickSpec {
               var int: Swift.Int = 1
               """
 
-            visitor = MemberTypeIdentifierSyntaxVisitor()
+            visitor = MemberTypeIdentifierSyntaxVisitor(viewMode: .visitorDefault)
             try? visitor.walkContent(content)
           }
 
@@ -510,7 +510,7 @@ final class TypeDescriptionSpec: QuickSpec {
               var intArray: Swift.Array<Int> = [1]
               """
 
-            visitor = MemberTypeIdentifierSyntaxVisitor()
+            visitor = MemberTypeIdentifierSyntaxVisitor(viewMode: .visitorDefault)
             try? visitor.walkContent(content)
           }
 
@@ -525,7 +525,7 @@ final class TypeDescriptionSpec: QuickSpec {
               var genericType: OuterGenericType<Int>.InnerType
               """
 
-            visitor = MemberTypeIdentifierSyntaxVisitor()
+            visitor = MemberTypeIdentifierSyntaxVisitor(viewMode: .visitorDefault)
             try? visitor.walkContent(content)
           }
 
@@ -540,7 +540,7 @@ final class TypeDescriptionSpec: QuickSpec {
               var genericType: OuterGenericType<Int>.InnerGenericType<String>
               """
 
-            visitor = MemberTypeIdentifierSyntaxVisitor()
+            visitor = MemberTypeIdentifierSyntaxVisitor(viewMode: .visitorDefault)
             try? visitor.walkContent(content)
           }
 
@@ -567,7 +567,7 @@ final class TypeDescriptionSpec: QuickSpec {
             protocol FooBar: Foo & Bar
             """
 
-          visitor = CompositionTypeSyntaxVisitor()
+          visitor = CompositionTypeSyntaxVisitor(viewMode: .visitorDefault)
           try? visitor.walkContent(content)
         }
 
@@ -594,7 +594,7 @@ final class TypeDescriptionSpec: QuickSpec {
             protocol FooBar: Foo where Something == AnyObject? {}
             """
 
-          visitor = OptionalTypeSyntaxVisitor()
+          visitor = OptionalTypeSyntaxVisitor(viewMode: .visitorDefault)
           try? visitor.walkContent(content)
         }
 
@@ -621,7 +621,7 @@ final class TypeDescriptionSpec: QuickSpec {
             var int: Int!
             """
 
-          visitor = ImplicitlyUnwrappedOptionalTypeSyntaxVisitor()
+          visitor = ImplicitlyUnwrappedOptionalTypeSyntaxVisitor(viewMode: .visitorDefault)
           try? visitor.walkContent(content)
         }
 
@@ -646,7 +646,7 @@ final class TypeDescriptionSpec: QuickSpec {
             let metatype: Int.Type
             """
 
-            visitor = MetatypeTypeSyntaxVisitor()
+            visitor = MetatypeTypeSyntaxVisitor(viewMode: .visitorDefault)
             try? visitor.walkContent(content)
           }
 
@@ -661,7 +661,7 @@ final class TypeDescriptionSpec: QuickSpec {
             let metatype: Equatable.Protocol
             """
 
-            visitor = MetatypeTypeSyntaxVisitor()
+            visitor = MetatypeTypeSyntaxVisitor(viewMode: .visitorDefault)
             try? visitor.walkContent(content)
           }
 
@@ -686,7 +686,7 @@ final class TypeDescriptionSpec: QuickSpec {
             func makeSomething() -> some Equatable { "" }
             """
 
-          visitor = SomeTypeSyntaxVisitor()
+          visitor = SomeTypeSyntaxVisitor(viewMode: .visitorDefault)
           try? visitor.walkContent(content)
         }
 
@@ -708,10 +708,10 @@ final class TypeDescriptionSpec: QuickSpec {
         context("with a specifier") {
           beforeEach {
             let content = """
-            inout Int
+            (inout Int)
             """
 
-            visitor = AttributedTypeSyntaxVisitor()
+            visitor = AttributedTypeSyntaxVisitor(viewMode: .visitorDefault)
             try? visitor.walkContent(content)
           }
 
@@ -726,7 +726,7 @@ final class TypeDescriptionSpec: QuickSpec {
             @autoclosure () -> Void
             """
 
-            visitor = AttributedTypeSyntaxVisitor()
+            visitor = AttributedTypeSyntaxVisitor(viewMode: .visitorDefault)
             try? visitor.walkContent(content)
           }
 
@@ -738,10 +738,10 @@ final class TypeDescriptionSpec: QuickSpec {
             beforeEach {
               let content = """
               // This code doesn't compile but it can be parsed.
-              inout @autoclosure () -> Void
+              (inout @autoclosure () -> Void)
               """
 
-              visitor = AttributedTypeSyntaxVisitor()
+              visitor = AttributedTypeSyntaxVisitor(viewMode: .visitorDefault)
               try? visitor.walkContent(content)
             }
 
@@ -767,7 +767,7 @@ final class TypeDescriptionSpec: QuickSpec {
             var intArray: [Int] = [Int]()
             """
 
-          visitor = ArrayTypeSyntaxVisitor()
+          visitor = ArrayTypeSyntaxVisitor(viewMode: .visitorDefault)
           try? visitor.walkContent(content)
         }
 
@@ -792,7 +792,7 @@ final class TypeDescriptionSpec: QuickSpec {
             var intArray: Array<Int>
             """
 
-            visitor = SimpleTypeIdentifierSyntaxVisitor()
+            visitor = SimpleTypeIdentifierSyntaxVisitor(viewMode: .visitorDefault)
             try? visitor.walkContent(content)
           }
 
@@ -807,7 +807,7 @@ final class TypeDescriptionSpec: QuickSpec {
             var twoDimensionalIntArray: Array<Array<Int>>
             """
 
-            visitor = SimpleTypeIdentifierSyntaxVisitor()
+            visitor = SimpleTypeIdentifierSyntaxVisitor(viewMode: .visitorDefault)
             try? visitor.walkContent(content)
           }
 
@@ -833,7 +833,7 @@ final class TypeDescriptionSpec: QuickSpec {
             var dictionary: [Int: String] = [Int: String]()
             """
 
-          visitor = DictionaryTypeSyntaxVisitor()
+          visitor = DictionaryTypeSyntaxVisitor(viewMode: .visitorDefault)
           try? visitor.walkContent(content)
         }
 
@@ -858,7 +858,7 @@ final class TypeDescriptionSpec: QuickSpec {
             var dictionary: Dictionary<Int, String>
             """
 
-            visitor = SimpleTypeIdentifierSyntaxVisitor()
+            visitor = SimpleTypeIdentifierSyntaxVisitor(viewMode: .visitorDefault)
             try? visitor.walkContent(content)
           }
 
@@ -873,7 +873,7 @@ final class TypeDescriptionSpec: QuickSpec {
             var twoDimensionalDictionary: Dictionary<Int, Dictionary<Int, String>>
             """
 
-            visitor = SimpleTypeIdentifierSyntaxVisitor()
+            visitor = SimpleTypeIdentifierSyntaxVisitor(viewMode: .visitorDefault)
             try? visitor.walkContent(content)
           }
 
@@ -900,7 +900,7 @@ final class TypeDescriptionSpec: QuickSpec {
               var tuple: (Int, String)
               """
 
-          visitor = TupleTypeSyntaxVisitor()
+          visitor = TupleTypeSyntaxVisitor(viewMode: .visitorDefault)
           try? visitor.walkContent(content)
         }
 
@@ -926,7 +926,7 @@ final class TypeDescriptionSpec: QuickSpec {
               protocol SomeObject: class {}
               """
 
-          visitor = ClassRestrictionTypeSyntaxVisitor()
+          visitor = ClassRestrictionTypeSyntaxVisitor(viewMode: .visitorDefault)
           try? visitor.walkContent(content)
         }
 
@@ -953,7 +953,7 @@ final class TypeDescriptionSpec: QuickSpec {
                 var test: (Int, Double) -> String
                 """
 
-            visitor = FunctionTypeSyntaxVisitor()
+            visitor = FunctionTypeSyntaxVisitor(viewMode: .visitorDefault)
             try? visitor.walkContent(content)
           }
 
@@ -969,7 +969,7 @@ final class TypeDescriptionSpec: QuickSpec {
                 var test: (Int, Double) throws -> String
                 """
 
-            visitor = FunctionTypeSyntaxVisitor()
+            visitor = FunctionTypeSyntaxVisitor(viewMode: .visitorDefault)
             try? visitor.walkContent(content)
           }
 

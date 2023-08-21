@@ -30,11 +30,11 @@ import SwiftInspectorTestHelpers
 @testable import SwiftInspectorVisitors
 
 final class GenericRequirementVisitorSpec: QuickSpec {
-  private var sut = GenericRequirementVisitor()
+  private var sut = GenericRequirementVisitor(viewMode: .visitorDefault)
 
   override func spec() {
     beforeEach {
-      self.sut = GenericRequirementVisitor()
+      self.sut = GenericRequirementVisitor(viewMode: .visitorDefault)
     }
 
     describe("visit(_:)") {

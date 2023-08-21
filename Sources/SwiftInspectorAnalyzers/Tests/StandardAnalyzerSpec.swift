@@ -34,14 +34,14 @@ final class StandardAnalyzerSpec: QuickSpec {
 
   private final class MockVisitor: SyntaxVisitor {
     var ifStatementSyntaxVisitCount = 0
-    override func visitPost(_ node: IfStmtSyntax) {
+    override func visitPost(_ node: IfExprSyntax) {
       ifStatementSyntaxVisitCount += 1
     }
   }
 
   private final class MockRewriter: SyntaxRewriter {
     var ifStatementSyntaxVisitCount = 0
-    override func visit(_ node: IfStmtSyntax) -> StmtSyntax {
+    override func visit(_ node: IfExprSyntax) -> ExprSyntax {
       ifStatementSyntaxVisitCount += 1
       return super.visit(node)
     }
@@ -61,7 +61,7 @@ final class StandardAnalyzerSpec: QuickSpec {
       }
 
       it("walks the visitor over the content") {
-        let visitor = MockVisitor()
+        let visitor = MockVisitor(viewMode: .visitorDefault)
         try StandardAnalyzer().analyze(fileURL: fileURL, withVisitor: visitor)
 
         expect(visitor.ifStatementSyntaxVisitCount) == 1

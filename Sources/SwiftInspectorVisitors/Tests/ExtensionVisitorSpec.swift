@@ -30,11 +30,11 @@ import SwiftInspectorTestHelpers
 @testable import SwiftInspectorVisitors
 
 final class ExtensionVisitorSpec: QuickSpec {
-  private var sut = ExtensionVisitor()
+  private var sut = ExtensionVisitor(viewMode: .visitorDefault)
 
   override func spec() {
     beforeEach {
-      self.sut = ExtensionVisitor()
+      self.sut = ExtensionVisitor(viewMode: .visitorDefault)
       AssertionFailure.postNotification = true
     }
 
