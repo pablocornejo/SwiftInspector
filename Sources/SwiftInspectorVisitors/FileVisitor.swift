@@ -29,12 +29,13 @@ public final class FileVisitor: SyntaxVisitor {
 
   public init(fileURL: URL) {
     fileInfo = FileInfo(url: fileURL)
+    super.init(viewMode: .visitorDefault)
   }
 
   public private(set) var fileInfo: FileInfo
 
   public override func visit(_ node: ImportDeclSyntax) -> SyntaxVisitorContinueKind {
-    let importVisitor = ImportVisitor()
+    let importVisitor = ImportVisitor(viewMode: .visitorDefault)
     importVisitor.walk(node)
 
     fileInfo.appendImports(importVisitor.imports)
@@ -43,7 +44,7 @@ public final class FileVisitor: SyntaxVisitor {
     return .skipChildren
   }
   public override func visit(_ node: ProtocolDeclSyntax) -> SyntaxVisitorContinueKind {
-    let protocolVisitor = ProtocolVisitor()
+    let protocolVisitor = ProtocolVisitor(viewMode: .visitorDefault)
     protocolVisitor.walk(node)
 
     if let protocolInfo = protocolVisitor.protocolInfo {
@@ -56,7 +57,7 @@ public final class FileVisitor: SyntaxVisitor {
   }
 
   public override func visit(_ node: FunctionDeclSyntax) -> SyntaxVisitorContinueKind {
-    let visitor = FunctionDeclarationVisitor()
+    let visitor = FunctionDeclarationVisitor(viewMode: .visitorDefault)
     visitor.walk(node)
     fileInfo.appendFreeFunctions(visitor.functionDeclarations)
     return .skipChildren
@@ -75,7 +76,7 @@ public final class FileVisitor: SyntaxVisitor {
   }
 
   public override func visit(_ node: ExtensionDeclSyntax) -> SyntaxVisitorContinueKind {
-    let extensionVisitor = ExtensionVisitor()
+    let extensionVisitor = ExtensionVisitor(viewMode: .visitorDefault)
     extensionVisitor.walk(node)
 
     if let extensionInfo = extensionVisitor.extensionInfo {
@@ -90,7 +91,7 @@ public final class FileVisitor: SyntaxVisitor {
     return .skipChildren
   }
 
-  public override func visit(_ node: TypealiasDeclSyntax) -> SyntaxVisitorContinueKind {
+  public override func visit(_ node: TypeAliasDeclSyntax) -> SyntaxVisitorContinueKind {
     let typealiasVisitor = TypealiasVisitor()
     typealiasVisitor.walk(node)
 

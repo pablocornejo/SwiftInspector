@@ -86,10 +86,8 @@ public final class PropertyVisitor: SyntaxVisitor {
   }
 
   private func findModifiers(from node: VariableDeclSyntax) -> Modifiers {
-    let modifiersVisitor = DeclarationModifierVisitor()
-    if let modifiers = node.modifiers {
-      modifiersVisitor.walk(modifiers)
-    }
+    let modifiersVisitor = DeclarationModifierVisitor(viewMode: .visitorDefault)
+    modifiersVisitor.walk(node.modifiers)
 
     var modifiers = modifiersVisitor.modifiers
 
@@ -124,7 +122,7 @@ public final class PropertyVisitor: SyntaxVisitor {
   }
 
   private func findParadigm(from node: VariableDeclSyntax) -> PropertyInfo.Paradigm {
-    let patternBindingListVisitor = PatternBindingListVisitor()
+    let patternBindingListVisitor = PatternBindingListVisitor(viewMode: .visitorDefault)
     patternBindingListVisitor.walk(node.bindings)
 
     assert(
@@ -159,7 +157,7 @@ public final class PropertyVisitor: SyntaxVisitor {
   }
 
   private func findPropertyType(from node: VariableDeclSyntax) -> PropertyType {
-    if let type = PropertyType(rawValue: node.letOrVarKeyword.text) {
+    if let type = PropertyType(rawValue: node.bindingSpecifier.text) {
       return type
     }
     else {
@@ -191,18 +189,18 @@ private final class PatternBindingListVisitor: SyntaxVisitor {
   private(set) var protocolRequirements: ProtocolRequirements = []
 
   public override func visit(_ node: CodeBlockItemListSyntax) -> SyntaxVisitorContinueKind {
-    codeBlockDescription = node.withoutTrivia().description
+    codeBlockDescription = node.trimmed.description
     return .skipChildren
   }
 
   public override func visit(_ node: InitializerClauseSyntax) -> SyntaxVisitorContinueKind {
-    initializerDescription = node.withEqual(nil).description
+    initializerDescription = node.value.description
     return .skipChildren
   }
 
   public override func visit(_ node: AccessorDeclSyntax) -> SyntaxVisitorContinueKind {
-    if node.accessorKind.text == "get" { protocolRequirements.insert(.gettable) }
-    if node.accessorKind.text == "set" { protocolRequirements.insert(.settable) }
+    if node.accessorSpecifier.text == "get" { protocolRequirements.insert(.gettable) }
+    if node.accessorSpecifier.text == "set" { protocolRequirements.insert(.settable) }
     return .skipChildren
   }
 

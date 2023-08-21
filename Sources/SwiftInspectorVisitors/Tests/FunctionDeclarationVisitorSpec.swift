@@ -9,7 +9,7 @@ final class FunctionDeclarationVisitorSpec: QuickSpec {
 
   override func spec() {
     beforeEach {
-      self.sut = FunctionDeclarationVisitor()
+      self.sut = FunctionDeclarationVisitor(viewMode: .visitorDefault)
       AssertionFailure.postNotification = true
     }
 

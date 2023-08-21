@@ -53,12 +53,13 @@ public final class TypesAnalyzer: Analyzer {
 private final class TypeInfoSyntaxVisitor: SyntaxVisitor {
   init(_ onNodeVisit: @escaping (TypeInfo) -> Void) {
     self.onNodeVisit = onNodeVisit
+    super.init(viewMode: .visitorDefault)
   }
 
   override func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
     onNodeVisit(.init(
       type: .class,
-      name: node.identifier.text,
+      name: node.name.text,
       comment: comment(from: node.leadingTrivia)))
     return .visitChildren
   }
@@ -66,7 +67,7 @@ private final class TypeInfoSyntaxVisitor: SyntaxVisitor {
   override func visit(_ node: EnumDeclSyntax) -> SyntaxVisitorContinueKind {
     onNodeVisit(.init(
       type: .enum,
-      name: node.identifier.text,
+      name: node.name.text,
       comment: comment(from: node.leadingTrivia)))
     return .visitChildren
   }
@@ -74,7 +75,7 @@ private final class TypeInfoSyntaxVisitor: SyntaxVisitor {
   override func visit(_ node: ProtocolDeclSyntax) -> SyntaxVisitorContinueKind {
     onNodeVisit(.init(
       type: .protocol,
-      name: node.identifier.text,
+      name: node.name.text,
       comment: comment(from: node.leadingTrivia)))
     return .visitChildren
   }
@@ -82,7 +83,7 @@ private final class TypeInfoSyntaxVisitor: SyntaxVisitor {
   override func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
     onNodeVisit(.init(
       type: .struct,
-      name: node.identifier.text,
+      name: node.name.text,
       comment: comment(from: node.leadingTrivia)))
     return .visitChildren
   }

@@ -25,21 +25,15 @@
 import SwiftSyntax
 
 protocol NestableDeclSyntax: SyntaxProtocol {
-  var modifiers: ModifierListSyntax? { get }
+  var modifiers: DeclModifierListSyntax { get }
   var identifier: TokenSyntax { get }
-  var inheritanceClause: TypeInheritanceClauseSyntax? { get }
+  var inheritanceClause: InheritanceClauseSyntax? { get }
   var genericParameterClause: GenericParameterClauseSyntax? { get }
   var genericWhereClause: GenericWhereClauseSyntax? { get }
-  var members: MemberDeclBlockSyntax { get }
+  var members: MemberBlockSyntax { get }
 }
 
 extension ClassDeclSyntax: NestableDeclSyntax {}
 extension StructDeclSyntax: NestableDeclSyntax {}
-extension EnumDeclSyntax: NestableDeclSyntax {
-  var genericParameterClause: GenericParameterClauseSyntax? {
-    // Not sure why enums's `GenericParameterClauseSyntax` has a different
-    // accessor name, but it does. So let's remap.
-    genericParameters
-  }
-}
+extension EnumDeclSyntax: NestableDeclSyntax {}
 

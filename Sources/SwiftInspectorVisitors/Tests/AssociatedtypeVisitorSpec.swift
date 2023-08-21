@@ -29,11 +29,11 @@ import SwiftInspectorTestHelpers
 @testable import SwiftInspectorVisitors
 
 final class AssociatedtypeVisitorSpec: QuickSpec {
-  private var sut = AssociatedtypeVisitor()
+  private var sut = AssociatedtypeVisitor(viewMode: .visitorDefault)
 
   override func spec() {
     beforeEach {
-      self.sut = AssociatedtypeVisitor()
+      self.sut = AssociatedtypeVisitor(viewMode: .visitorDefault)
     }
 
     describe("visit(_:)") {

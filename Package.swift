@@ -16,7 +16,7 @@ let package = Package(
   ],
   dependencies: [
     .package(url: "https://github.com/apple/swift-argument-parser", from: "1.0.0"),
-    .package(url: "https://github.com/apple/swift-syntax.git", exact: "0.50700.1"),
+    .package(url: "https://github.com/apple/swift-syntax.git", branch: "509.0.0-swift-DEVELOPMENT-SNAPSHOT-2023-08-15-a"),
     .package(url: "https://github.com/Quick/Nimble.git", .upToNextMajor(from: "9.0.1")),
     .package(url: "https://github.com/Quick/Quick.git", .upToNextMajor(from: "4.0.0")),
   ],
@@ -25,7 +25,6 @@ let package = Package(
       name: "SwiftInspector",
       dependencies: [
         "SwiftInspectorCommands",
-        "lib_InternalSwiftSyntaxParser",
       ],
       linkerSettings: [.unsafeFlags(["-Xlinker", "-dead_strip_dylibs"])]),
 
@@ -50,7 +49,7 @@ let package = Package(
       name: "SwiftInspectorAnalyzers",
       dependencies: [
         .product(name: "SwiftSyntax", package: "swift-syntax"),
-        .product(name: "SwiftSyntaxParser", package: "swift-syntax"),
+        .product(name: "SwiftParser", package: "swift-syntax"),
         "SwiftInspectorVisitors",
       ],
       exclude: ["Tests"]),
@@ -70,7 +69,7 @@ let package = Package(
       name: "SwiftInspectorTestHelpers",
       dependencies: [
         .product(name: "SwiftSyntax", package: "swift-syntax"),
-        .product(name: "SwiftSyntaxParser", package: "swift-syntax"),
+        .product(name: "SwiftParser", package: "swift-syntax"),
       ],
       exclude: ["Tests"]),
     .testTarget(
@@ -99,11 +98,5 @@ let package = Package(
       ],
       path: "Sources/SwiftInspectorVisitors/Tests",
       linkerSettings: [.unsafeFlags(["-Xlinker", "-rpath", "-Xlinker", "$DT_TOOLCHAIN_DIR/usr/lib/swift/macosx"])]),
-
-      .binaryTarget(
-          name: "lib_InternalSwiftSyntaxParser",
-          url: "https://github.com/keith/StaticInternalSwiftSyntaxParser/releases/download/5.7.1/lib_InternalSwiftSyntaxParser.xcframework.zip",
-          checksum: "feb332ba0a027812b1ee7f552321d6069a46207e5cd0f64fa9bb78e2a261b366"
-      ),
   ]
 )

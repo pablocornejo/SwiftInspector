@@ -28,33 +28,33 @@ public final class TypealiasVisitor: SyntaxVisitor {
 
   public init(parentType: TypeDescription? = nil) {
     self.parentType = parentType
+    super.init(viewMode: .visitorDefault)
   }
 
   public private(set) var typealiases = [TypealiasInfo]()
 
-  public override func visit(_ node: TypealiasDeclSyntax) -> SyntaxVisitorContinueKind {
-    let name = node.identifier.text
+  public override func visit(_ node: TypeAliasDeclSyntax) -> SyntaxVisitorContinueKind {
+    let name = node.name.text
 
-    let genericTypeVisitor = GenericParameterVisitor()
+    let genericTypeVisitor = GenericParameterVisitor(viewMode: .visitorDefault)
     if let genericParameterClause = node.genericParameterClause {
       genericTypeVisitor.walk(genericParameterClause)
     }
 
-    let genericRequirementVisitor = GenericRequirementVisitor()
+    let genericRequirementVisitor = GenericRequirementVisitor(viewMode: .visitorDefault)
     if let genericWhereClause = node.genericWhereClause {
       genericRequirementVisitor.walk(genericWhereClause)
     }
 
-    let declarationModifierVisitor = DeclarationModifierVisitor()
-    if let modifiers = node.modifiers {
-      declarationModifierVisitor.walk(modifiers)
-    }
+    let declarationModifierVisitor = DeclarationModifierVisitor(viewMode: .visitorDefault)
+    let modifiers = node.modifiers
+    declarationModifierVisitor.walk(modifiers)
 
     typealiases.append(
       .init(
         name: name,
         genericParameters: genericTypeVisitor.genericParameters,
-        initializer: node.initializer?.value.typeDescription,
+        initializer: node.initializer.value.typeDescription,
         genericRequirements: genericRequirementVisitor.genericRequirements,
         modifiers: declarationModifierVisitor.modifiers,
         parentType: parentType))

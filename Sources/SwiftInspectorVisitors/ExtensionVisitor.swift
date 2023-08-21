@@ -45,20 +45,18 @@ public final class ExtensionVisitor: SyntaxVisitor {
       return .skipChildren
     }
 
-    let typeInheritanceVisitor = TypeInheritanceVisitor()
+    let typeInheritanceVisitor = TypeInheritanceVisitor(viewMode: .visitorDefault)
     if let inheritanceClause = node.inheritanceClause {
       typeInheritanceVisitor.walk(inheritanceClause)
     }
 
-    let genericRequirementVisitor = GenericRequirementVisitor()
+    let genericRequirementVisitor = GenericRequirementVisitor(viewMode: .visitorDefault)
     if let genericWhereClause = node.genericWhereClause {
       genericRequirementVisitor.walk(genericWhereClause)
     }
 
-    let declarationModifierVisitor = DeclarationModifierVisitor()
-    if let modifiers = node.modifiers {
-      declarationModifierVisitor.walk(modifiers)
-    }
+    let declarationModifierVisitor = DeclarationModifierVisitor(viewMode: .visitorDefault)
+    declarationModifierVisitor.walk(node.modifiers)
 
     extensionInfo = ExtensionInfo(
       typeDescription: node.extendedType.typeDescription,
@@ -92,7 +90,7 @@ public final class ExtensionVisitor: SyntaxVisitor {
     return .skipChildren
   }
 
-  public override func visit(_ node: TypealiasDeclSyntax) -> SyntaxVisitorContinueKind {
+  public override func visit(_ node: TypeAliasDeclSyntax) -> SyntaxVisitorContinueKind {
     let typealiasVisitor = TypealiasVisitor(parentType: extensionInfo?.typeDescription)
     typealiasVisitor.walk(node)
 
@@ -103,7 +101,7 @@ public final class ExtensionVisitor: SyntaxVisitor {
   }
 
   public override func visit(_ node: VariableDeclSyntax) -> SyntaxVisitorContinueKind {
-    let propertyVisitor = PropertyVisitor()
+    let propertyVisitor = PropertyVisitor(viewMode: .visitorDefault)
     propertyVisitor.walk(node)
 
     extensionInfo?.properties.append(contentsOf: propertyVisitor.properties)
@@ -113,7 +111,7 @@ public final class ExtensionVisitor: SyntaxVisitor {
   }
 
   public override func visit(_ node: FunctionDeclSyntax) -> SyntaxVisitorContinueKind {
-    let functionDeclarationVisitor = FunctionDeclarationVisitor()
+    let functionDeclarationVisitor = FunctionDeclarationVisitor(viewMode: .visitorDefault)
     functionDeclarationVisitor.walk(node)
 
     extensionInfo?.functionDeclarations.append(contentsOf: functionDeclarationVisitor.functionDeclarations)

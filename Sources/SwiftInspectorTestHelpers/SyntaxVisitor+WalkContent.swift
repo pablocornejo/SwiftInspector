@@ -24,7 +24,7 @@
 
 import Foundation
 import SwiftSyntax
-import SwiftSyntaxParser
+import SwiftParser
 
 extension SyntaxVisitor {
   /// Walks the visitor along the content's syntax.
@@ -32,7 +32,7 @@ extension SyntaxVisitor {
   /// - Parameters:
   ///   - content: The content to turn into source and walk.
   public func walkContent(_ content: String) throws {
-    let syntax: SourceFileSyntax = try SyntaxParser.parse(source: content)
+    let syntax: SourceFileSyntax = Parser.parse(source: content)
     walk(syntax)
   }
 }

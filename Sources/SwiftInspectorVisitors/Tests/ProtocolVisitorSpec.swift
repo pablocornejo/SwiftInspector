@@ -30,11 +30,11 @@ import SwiftInspectorTestHelpers
 @testable import SwiftInspectorVisitors
 
 final class ProtocolVisitorSpec: QuickSpec {
-  private var sut = ProtocolVisitor()
+  private var sut = ProtocolVisitor(viewMode: .visitorDefault)
 
   override func spec() {
     beforeEach {
-      self.sut = ProtocolVisitor()
+      self.sut = ProtocolVisitor(viewMode: .visitorDefault)
       AssertionFailure.postNotification = true
     }
 

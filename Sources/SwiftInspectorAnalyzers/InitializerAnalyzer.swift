@@ -61,11 +61,11 @@ public final class InitializerAnalyzer: Analyzer {
   }
 
   private func findParameters(from node: InitializerDeclSyntax) -> [InitializerStatement.Parameter] {
-    let functionList = node.children
-      .compactMap { $0.as(ParameterClauseSyntax.self) }
-      .first?.children
-      .compactMap { $0.as(FunctionParameterListSyntax.self) }
-      .first
+    let functionList = node.children(viewMode: .visitorDefault)
+      .compactMap { $0.as(FunctionSignatureSyntax.self) }
+      .first?.children(viewMode: .visitorDefault)
+      .compactMap { $0.as(FunctionParameterClauseSyntax.self) }
+      .first?.parameters
 
     guard let list = functionList else {
       return []
@@ -87,10 +87,8 @@ public final class InitializerAnalyzer: Analyzer {
     // for the parameter. e.g. init(some another: String) -- the parameter would be `another`
     if let secondName = node.secondName {
       name = secondName.text
-    } else if let firstName = node.firstName {
-      name = firstName.text
     } else {
-      name = ""
+      name = node.firstName.text
     }
 
     var typeNames: [String] = []
@@ -103,10 +101,10 @@ public final class InitializerAnalyzer: Analyzer {
   }
 
   private func findModifiers(from node: InitializerDeclSyntax) -> Modifiers {
-    let modifiersString: [String] = node.children
-      .compactMap { $0.as(ModifierListSyntax.self) }
+    let modifiersString: [String] = node.children(viewMode: .visitorDefault)
+      .compactMap { $0.as(DeclModifierListSyntax.self) }
       .reduce(into: []) { result, syntax in
-        let modifiers = syntax.children
+        let modifiers = syntax.children(viewMode: .visitorDefault)
           .compactMap { $0.as(DeclModifierSyntax.self) }
           .map { $0.name.text }
         result.append(contentsOf: modifiers)
@@ -169,18 +167,19 @@ private final class InitializerSyntaxReader: SyntaxVisitor {
   {
     self.shouldVisitIdentifier = shouldVisitIdentifier
     self.onNodeVisit = onNodeVisit
+    super.init(viewMode: .visitorDefault)
   }
 
   override func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
-    shouldVisitIdentifier(node.identifier.text) ? .visitChildren : .skipChildren
+    shouldVisitIdentifier(node.name.text) ? .visitChildren : .skipChildren
   }
 
   override func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
-    shouldVisitIdentifier(node.identifier.text) ? .visitChildren : .skipChildren
+    shouldVisitIdentifier(node.name.text) ? .visitChildren : .skipChildren
   }
 
   override func visit(_ node: EnumDeclSyntax) -> SyntaxVisitorContinueKind {
-    shouldVisitIdentifier(node.identifier.text) ? .visitChildren : .skipChildren
+    shouldVisitIdentifier(node.name.text) ? .visitChildren : .skipChildren
   }
 
   override func visit(_ node: InitializerDeclSyntax) -> SyntaxVisitorContinueKind {
@@ -193,15 +192,16 @@ private final class InitializerSyntaxReader: SyntaxVisitor {
 }
 
 private final class FunctionParameterReader: SyntaxVisitor {
-  init(onNodeVisit: @escaping (SimpleTypeIdentifierSyntax) -> Void) {
+  init(onNodeVisit: @escaping (IdentifierTypeSyntax) -> Void) {
     self.onNodeVisit = onNodeVisit
+    super.init(viewMode: .visitorDefault)
   }
 
-  override func visit(_ node: SimpleTypeIdentifierSyntax) -> SyntaxVisitorContinueKind {
+  override func visit(_ node: IdentifierTypeSyntax) -> SyntaxVisitorContinueKind {
     onNodeVisit(node)
     return .visitChildren
   }
 
-  let onNodeVisit: (SimpleTypeIdentifierSyntax) -> Void
+  let onNodeVisit: (IdentifierTypeSyntax) -> Void
 
 }

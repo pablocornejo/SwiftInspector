@@ -36,7 +36,7 @@ final class PropertyVisitorSpec: QuickSpec {
       var sut: PropertyVisitor!
 
       beforeEach {
-        sut = PropertyVisitor()
+        sut = PropertyVisitor(viewMode: .visitorDefault)
         AssertionFailure.postNotification = true
       }
 
@@ -458,6 +458,7 @@ private final class TestProtocolVisitor: SyntaxVisitor {
 
   init(propertyVisitor: PropertyVisitor) {
     self.propertyVisitor = propertyVisitor
+    super.init(viewMode: .visitorDefault)
   }
 
   override func visit(_ node: VariableDeclSyntax) -> SyntaxVisitorContinueKind {
