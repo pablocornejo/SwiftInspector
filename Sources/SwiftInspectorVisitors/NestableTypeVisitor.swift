@@ -29,6 +29,7 @@ public final class NestableTypeVisitor: SyntaxVisitor {
 
   public init(parentType: TypeDescription? = nil) {
     self.parentType = parentType
+    super.init(viewMode: .visitorDefault)
   }
 
   deinit {
@@ -112,7 +113,7 @@ public final class NestableTypeVisitor: SyntaxVisitor {
       return .skipChildren
     }
 
-    let visitor = PropertyVisitor()
+    let visitor = PropertyVisitor(viewMode: .visitorDefault)
     visitor.walk(node)
 
     self.topLevelDeclaration = topLevelDeclaration
@@ -128,7 +129,7 @@ public final class NestableTypeVisitor: SyntaxVisitor {
       return .skipChildren
     }
 
-    let visitor = FunctionDeclarationVisitor()
+    let visitor = FunctionDeclarationVisitor(viewMode: .visitorDefault)
     visitor.walk(node)
 
     self.topLevelDeclaration = topLevelDeclaration
@@ -171,22 +172,20 @@ public final class NestableTypeVisitor: SyntaxVisitor {
     } else {
       // Recursive case. This is the first top-level declaration we've come across.
       // We need to get its information and then visit children to see if there is more information we need.
-      let typeInheritanceVisitor = TypeInheritanceVisitor()
+      let typeInheritanceVisitor = TypeInheritanceVisitor(viewMode: .visitorDefault)
       if let inheritanceClause = node.inheritanceClause {
         typeInheritanceVisitor.walk(inheritanceClause)
       }
 
-      let declarationModifierVisitor = DeclarationModifierVisitor()
-      if let modifiers = node.modifiers {
-        declarationModifierVisitor.walk(modifiers)
-      }
+      let declarationModifierVisitor = DeclarationModifierVisitor(viewMode: .visitorDefault)
+      declarationModifierVisitor.walk(node.modifiers)
 
-      let genericParameterVisitor = GenericParameterVisitor()
+      let genericParameterVisitor = GenericParameterVisitor(viewMode: .visitorDefault)
       if let genericParameterClause = node.genericParameterClause {
         genericParameterVisitor.walk(genericParameterClause)
       }
 
-      let genericRequirementVisitor = GenericRequirementVisitor()
+      let genericRequirementVisitor = GenericRequirementVisitor(viewMode: .visitorDefault)
       if let genericWhereClause = node.genericWhereClause {
         genericRequirementVisitor.walk(genericWhereClause)
       }

@@ -22,6 +22,7 @@
 
 import Foundation
 import SwiftSyntax
+import SwiftInspectorVisitors
 
 // MARK: - TypeLocationAnalyzer
 
@@ -59,10 +60,16 @@ private final class TypeLocationSyntaxVisitor: SyntaxVisitor {
 
   init(onNodeVisit: @escaping (_ locatedType: LocatedType) -> Void) {
     self.onNodeVisit = onNodeVisit
+    super.init(viewMode: .visitorDefault)
   }
 
   override func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
-    processLocatedType(name: node.identifier.text, keywordToken: node.classOrActorKeyword, for: node)
+    processLocatedType(name: node.identifier.text, keywordToken: node.classKeyword, for: node)
+    return .visitChildren
+  }
+    
+  override func visit(_ node: ActorDeclSyntax) -> SyntaxVisitorContinueKind {
+    processLocatedType(name: node.identifier.text, keywordToken: node.actorKeyword, for: node)
     return .visitChildren
   }
 
@@ -85,12 +92,9 @@ private final class TypeLocationSyntaxVisitor: SyntaxVisitor {
     // Some nodes seem to include trivia from other nodes. Only counting newlines for trivia
     // associated with tokens ensures we get an accurate count.
     // Tokens are processed after `*DeclSyntax` nodes.
-    if let leadingTrivia = token.leadingTrivia {
-      currentLineNumber += leadingTrivia.countOfNewlines()
-    }
-    if let trailingTrivia = token.trailingTrivia {
-      currentLineNumber += trailingTrivia.countOfNewlines()
-    }
+    currentLineNumber += token.leadingTrivia.countOfNewlines()
+    currentLineNumber += token.trailingTrivia.countOfNewlines()
+    
     return .visitChildren
   }
 
@@ -101,7 +105,7 @@ private final class TypeLocationSyntaxVisitor: SyntaxVisitor {
   private func processLocatedType(name: String, keywordToken: TokenSyntax, for node: SyntaxProtocol) {
     var indexOfStartingLine = currentLineNumber
     // `currentLineNumber` doesn't yet include newlines from the leading trivia for the first token.
-    indexOfStartingLine += node.firstToken?.leadingTrivia.countOfNewlines() ?? 0
+    indexOfStartingLine += node.firstToken(viewMode: .visitorDefault)?.leadingTrivia.countOfNewlines() ?? 0
 
     let indexOfEndingLine = indexOfStartingLine + countOfNewlines(within: node)
 
@@ -116,14 +120,12 @@ private final class TypeLocationSyntaxVisitor: SyntaxVisitor {
   private func countOfNewlines(within node: SyntaxProtocol) -> Int {
     var countOfNewlinesInsideType = 0
 
-    for (offset, token) in node.tokens.enumerated() {
+    for (offset, token) in node.tokens(viewMode: .visitorDefault).enumerated() {
       // We've already counted the leading trivia for the first token.
-      if let leadingTrivia = token.leadingTrivia, offset != 0 {
-        countOfNewlinesInsideType += leadingTrivia.countOfNewlines()
+      if offset != 0 {
+        countOfNewlinesInsideType += token.leadingTrivia.countOfNewlines()
       }
-      if let trailingTrivia = token.trailingTrivia{
-        countOfNewlinesInsideType += trailingTrivia.countOfNewlines()
-      }
+      countOfNewlinesInsideType += token.trailingTrivia.countOfNewlines()
     }
 
     return countOfNewlinesInsideType

@@ -35,11 +35,11 @@ final class DeclarationModifierVisitor: SyntaxVisitor {
 
   public override func visit(_ node: DeclModifierSyntax) -> SyntaxVisitorContinueKind {
     if
-      let leftParen = node.detailLeftParen,
-      let detail = node.detail,
-      let rightParen = node.detailRightParen
+      let leftParen = node.detail?.leftParen,
+      let detail = node.detail?.detail,
+      let rightParen = node.detail?.rightParen
     {
-      rawModifiers.append(node.name.text + leftParen.text + detail.text + rightParen.text)
+      rawModifiers.append(node.name.text + leftParen.text + detail.description + rightParen.text)
     } else {
       rawModifiers.append(node.name.text)
     }

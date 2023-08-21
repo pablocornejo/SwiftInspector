@@ -24,7 +24,7 @@
 
 import Foundation
 import SwiftSyntax
-import SwiftSyntaxParser
+import SwiftParser
 
 /// A type that knows how to return a source file syntax given a file URL
 public final class CachedSyntaxTree {
@@ -48,7 +48,12 @@ public final class CachedSyntaxTree {
   /// 
   /// - Parameter fileURL: The location of the Swift file to parse
   private func memoizeSyntaxTree(at fileURL: URL) throws -> SourceFileSyntax {
-    let cached = try SyntaxParser.parse(fileURL)
+    let fileData = try Data(contentsOf: fileURL)
+    let source = fileData.withUnsafeBytes { buf in
+      return String(decoding: buf.bindMemory(to: UInt8.self), as: UTF8.self)
+    }
+    
+    let cached = Parser.parse(source: source)
     cachedSyntax[fileURL] = cached
     return cached
   }

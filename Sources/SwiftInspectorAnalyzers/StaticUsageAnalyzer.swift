@@ -83,6 +83,7 @@ public struct StaticUsage: Equatable {
 private final class StaticUsageReader: SyntaxVisitor {
   init(onNodeVisit: @escaping (MemberAccessExprSyntax) -> Void) {
     self.onNodeVisit = onNodeVisit
+    super.init(viewMode: .visitorDefault)
   }
 
   override func visit(_ node: MemberAccessExprSyntax) -> SyntaxVisitorContinueKind {

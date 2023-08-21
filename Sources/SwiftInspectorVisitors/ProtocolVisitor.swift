@@ -45,26 +45,24 @@ public final class ProtocolVisitor: SyntaxVisitor {
       assertionFailureOrPostNotification("Encountered more than one top-level protocol. This is a usage error: a single ProtocolVisitor instance should start walking only over a node of type `ProtocolDeclSyntax`")
       return .skipChildren
     }
-    let name = node.identifier.text
+    let name = node.name.text
     self.name = name
     parentType = .simple(name: name)
 
-    let typeInheritanceVisitor = TypeInheritanceVisitor()
+    let typeInheritanceVisitor = TypeInheritanceVisitor(viewMode: .visitorDefault)
     if let inheritanceClause = node.inheritanceClause {
       typeInheritanceVisitor.walk(inheritanceClause)
       inheritsFromTypes = typeInheritanceVisitor.inheritsFromTypes
     }
-    let genericRequirementVisitor = GenericRequirementVisitor()
+    let genericRequirementVisitor = GenericRequirementVisitor(viewMode: .visitorDefault)
     if let genericWhereClause = node.genericWhereClause {
       genericRequirementVisitor.walk(genericWhereClause)
       genericRequirements = genericRequirementVisitor.genericRequirements
     }
 
-    let declarationModifierVisitor = DeclarationModifierVisitor()
-    if let modifiers = node.modifiers {
-      declarationModifierVisitor.walk(modifiers)
-      self.modifiers = declarationModifierVisitor.modifiers
-    }
+    let declarationModifierVisitor = DeclarationModifierVisitor(viewMode: .visitorDefault)
+    declarationModifierVisitor.walk(node.modifiers)
+    self.modifiers = declarationModifierVisitor.modifiers
 
     return .visitChildren
   }
@@ -89,7 +87,7 @@ public final class ProtocolVisitor: SyntaxVisitor {
   }
 
   public override func visit(_ node: AssociatedtypeDeclSyntax) -> SyntaxVisitorContinueKind {
-    let associatedtypeVisitor = AssociatedtypeVisitor()
+    let associatedtypeVisitor = AssociatedtypeVisitor(viewMode: .visitorDefault)
     associatedtypeVisitor.walk(node)
     associatedtypes.append(contentsOf: associatedtypeVisitor.associatedTypes)
 
@@ -107,7 +105,7 @@ public final class ProtocolVisitor: SyntaxVisitor {
   }
 
   public override func visit(_ node: VariableDeclSyntax) -> SyntaxVisitorContinueKind {
-    let propertiesVisitor = PropertyVisitor()
+    let propertiesVisitor = PropertyVisitor(viewMode: .visitorDefault)
     propertiesVisitor.walk(node)
     properties.append(contentsOf: propertiesVisitor.properties)
 
@@ -116,7 +114,7 @@ public final class ProtocolVisitor: SyntaxVisitor {
   }
 
   public override func visit(_ node: FunctionDeclSyntax) -> SyntaxVisitorContinueKind {
-    let visitor = FunctionDeclarationVisitor()
+    let visitor = FunctionDeclarationVisitor(viewMode: .visitorDefault)
     visitor.walk(node)
     let functions = visitor.functionDeclarations
     functionDeclarations.append(contentsOf: functions)

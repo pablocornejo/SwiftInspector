@@ -24,6 +24,7 @@
 
 import Foundation
 import SwiftSyntax
+import SwiftInspectorVisitors
 
 public final class TypeConformanceAnalyzer: Analyzer {
 
@@ -94,6 +95,7 @@ public struct TypeConformance: Equatable {
 private final class TypeConformanceSyntaxVisitor: SyntaxVisitor {
   init(onNodeVisit: @escaping (InheritedTypeSyntax) -> Void) {
     self.onNodeVisit = onNodeVisit
+    super.init(viewMode: .visitorDefault)
   }
 
   override func visit(_ node: InheritedTypeSyntax) -> SyntaxVisitorContinueKind {

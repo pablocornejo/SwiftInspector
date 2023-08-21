@@ -2,15 +2,13 @@ import SwiftSyntax
 
 public final class FunctionDeclarationVisitor: SyntaxVisitor {
   public override func visit(_ node: FunctionDeclSyntax) -> SyntaxVisitorContinueKind {
-    let name = node.identifier.withoutTrivia().description
+    let name = node.identifier.text
 
-    let functionSignatureVisitor = FunctionSignatureVisitor()
+    let functionSignatureVisitor = FunctionSignatureVisitor(viewMode: .visitorDefault)
     functionSignatureVisitor.walk(node)
 
-    let modifiersVisitor = DeclarationModifierVisitor()
-    if let modifiers = node.modifiers {
-      modifiersVisitor.walk(modifiers)
-    }
+    let modifiersVisitor = DeclarationModifierVisitor(viewMode: .visitorDefault)
+    modifiersVisitor.walk(node.modifiers)
 
     let info = FunctionDeclarationInfo(
       modifiers: modifiersVisitor.modifiers,
@@ -51,10 +49,8 @@ public final class FunctionDeclarationVisitor: SyntaxVisitor {
 
 fileprivate final class FunctionSignatureVisitor: SyntaxVisitor {
   override func visit(_ node: FunctionParameterSyntax) -> SyntaxVisitorContinueKind {
-    guard
-      let firstMember = node.firstName?.text,
-      let type = node.type?.typeDescription
-    else { return .skipChildren }
+    let firstMember = node.firstName.text
+    let type = node.type.typeDescription
 
     let secondMember = node.secondName?.text
 

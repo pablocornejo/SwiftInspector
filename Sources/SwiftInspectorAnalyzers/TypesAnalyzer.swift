@@ -53,6 +53,7 @@ public final class TypesAnalyzer: Analyzer {
 private final class TypeInfoSyntaxVisitor: SyntaxVisitor {
   init(_ onNodeVisit: @escaping (TypeInfo) -> Void) {
     self.onNodeVisit = onNodeVisit
+    super.init(viewMode: .visitorDefault)
   }
 
   override func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {

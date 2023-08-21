@@ -70,17 +70,17 @@ public final class ImportVisitor: SyntaxVisitor {
   ///            e.g `import class UIKit.UIViewController` returns class
   ///            while `import UIKit` and `import UIKit.UIViewController` return an empty String
   private func findImportKind(from syntaxNode: ImportDeclSyntax) -> String {
-    for token in syntaxNode.tokens {
+    for token in syntaxNode.tokens(viewMode: .visitorDefault) {
       switch token.tokenKind {
       // List is from https://thoughtbot.com/blog/swift-imports
-      case .typealiasKeyword,
-           .structKeyword,
-           .classKeyword,
-           .enumKeyword,
-           .protocolKeyword,
-           .letKeyword,
-           .varKeyword,
-           .funcKeyword:
+      case .keyword(.typealias),
+            .keyword(.struct),
+            .keyword(.class),
+            .keyword(.enum),
+            .keyword(.protocol),
+            .keyword(.let),
+            .keyword(.var),
+            .keyword(.func):
         return token.text
       default:
         break
@@ -100,7 +100,7 @@ public final class ImportVisitor: SyntaxVisitor {
     var moduleIdentifier: String = ""
     var submoduleIdentifier: String = ""
 
-    for child in syntaxNode.children {
+    for child in syntaxNode.children(viewMode: .visitorDefault) {
       guard let accessPath = child.as(AccessPathSyntax.self) else {
         continue
       }
@@ -121,14 +121,14 @@ public final class ImportVisitor: SyntaxVisitor {
   }
 
   private func findAttribute(from syntaxNode: ImportDeclSyntax) -> String {
-    for child in syntaxNode.children {
+    for child in syntaxNode.children(viewMode: .visitorDefault) {
       guard let attributeList = child.as(AttributeListSyntax.self) else {
         continue
       }
 
       // This AttributeList is of the form ["@", "attribute"]
       // So we grab the last token
-      return attributeList.lastToken?.text ?? ""
+      return attributeList.lastToken(viewMode: .visitorDefault)?.text ?? ""
     }
     return ""
   }

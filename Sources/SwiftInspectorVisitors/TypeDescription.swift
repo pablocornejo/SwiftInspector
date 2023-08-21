@@ -41,7 +41,7 @@ public enum TypeDescription: Codable, Hashable {
   /// A meta type. e.g. `Int.Type` or `Equatable.Protocol`
   indirect case metatype(TypeDescription, isType: Bool)
   /// A type identifier with a specifier or attributes. e.g. `inout Int` or `@autoclosure () -> Void`
-  indirect case attributed(TypeDescription, specifier: String?, attributes: [String]?)
+  indirect case attributed(TypeDescription, specifier: String?, attributes: [String])
   /// An array. e.g. [Int]
   indirect case array(element: TypeDescription)
   /// A dictionary. e.g. [Int: String]
@@ -110,11 +110,11 @@ public enum TypeDescription: Codable, Hashable {
           .joined(separator: " ")
       }
       switch (specifier, attributes) {
-      case let (.some(specifier), .none):
+      case let (.some(specifier), []):
         return "\(specifier) \(type.asSource)"
-      case let (.none, .some(attributes)):
+      case let (.none, attributes):
         return "\(attributesFromList(attributes)) \(type.asSource)"
-      case let (.some(specifier), .some(attributes)):
+      case let (.some(specifier), attributes):
         // This case likely represents an error.
         // We are unaware of type reference that compiles with both a specifier and attributes.
         // The Swift reference manual specifies that attributes come before the specifier,
@@ -123,7 +123,7 @@ public enum TypeDescription: Codable, Hashable {
         // As a result, we construct this source with the specifier first.
         // Reference manual: https://docs.swift.org/swift-book/ReferenceManual/Types.html#grammar_type
         return "\(specifier) \(attributesFromList(attributes)) \(type.asSource)"
-      case (.none, .none):
+      case (.none, []):
         // This case represents an error that has previously caused an assertion.
         return type.asSource
       }
@@ -183,7 +183,7 @@ public enum TypeDescription: Codable, Hashable {
     case Self.attributedDescription:
       let typeDescription = try values.decode(Self.self, forKey: .typeDescription)
       let specifier = try values.decodeIfPresent(String.self, forKey: .specifier)
-      let attributes = try values.decodeIfPresent([String].self, forKey: .attributes)
+      let attributes = try values.decodeIfPresent([String].self, forKey: .attributes) ?? []
       self = .attributed(typeDescription, specifier: specifier, attributes: attributes)
 
     case Self.arrayDescription:
@@ -330,7 +330,7 @@ extension TypeSyntax {
   /// Returns the type description for the receiver.
   var typeDescription: TypeDescription {
     if let typeIdentifier = self.as(SimpleTypeIdentifierSyntax.self) {
-      let genericTypeVisitor = GenericArgumentVisitor()
+      let genericTypeVisitor = GenericArgumentVisitor(viewMode: .visitorDefault)
       if let genericArgumentClause = typeIdentifier.genericArgumentClause {
         genericTypeVisitor.walk(genericArgumentClause)
       }
@@ -339,7 +339,7 @@ extension TypeSyntax {
         generics: genericTypeVisitor.genericArguments)
 
     } else if let typeIdentifier = self.as(MemberTypeIdentifierSyntax.self) {
-      let genericTypeVisitor = GenericArgumentVisitor()
+      let genericTypeVisitor = GenericArgumentVisitor(viewMode: .visitorDefault)
       if let genericArgumentClause = typeIdentifier.genericArgumentClause {
         genericTypeVisitor.walk(genericArgumentClause)
       }
@@ -367,8 +367,8 @@ extension TypeSyntax {
 
     } else if let typeIdentifier = self.as(AttributedTypeSyntax.self) {
       let specifier = typeIdentifier.specifier?.text
-      let attributes = typeIdentifier.attributes?.compactMap {
-        $0.as(AttributeSyntax.self)?.attributeName.text
+      let attributes = typeIdentifier.attributes.compactMap {
+        $0.as(AttributeSyntax.self)?.attributeName.trimmedDescription
       }
       if specifier == nil && attributes == nil {
         assertionFailureOrPostNotification("Encountered an attributed type with no attributes or specifiers")
@@ -397,8 +397,8 @@ extension TypeSyntax {
     } else if let typeIdentifier = self.as(FunctionTypeSyntax.self) {
       return .closure(
         arguments: typeIdentifier.arguments.map { $0.type.typeDescription },
-        doesThrow: typeIdentifier.throwsOrRethrowsKeyword != nil,
-        returnType: typeIdentifier.returnType.typeDescription)
+        doesThrow: typeIdentifier.effectSpecifiers?.throwsSpecifier != nil,
+        returnType: typeIdentifier.output.returnType.typeDescription)
 
     } else {
       assertionFailureOrPostNotification("TypeSyntax of unknown type. Defaulting to `description`.")

@@ -31,12 +31,12 @@ public final class AssociatedtypeVisitor: SyntaxVisitor {
   public override func visit(_ node: AssociatedtypeDeclSyntax) -> SyntaxVisitorContinueKind {
     let name = node.identifier.text
 
-    let typeInheritanceVisitor = TypeInheritanceVisitor()
+    let typeInheritanceVisitor = TypeInheritanceVisitor(viewMode: .visitorDefault)
     if let inheritanceClause = node.inheritanceClause {
       typeInheritanceVisitor.walk(inheritanceClause)
     }
 
-    let genericRequirementVisitor = GenericRequirementVisitor()
+    let genericRequirementVisitor = GenericRequirementVisitor(viewMode: .visitorDefault)
     if let genericWhereClause = node.genericWhereClause {
       genericRequirementVisitor.walk(genericWhereClause)
     }
